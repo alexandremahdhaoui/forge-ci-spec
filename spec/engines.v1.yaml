@@ -1,0 +1,331 @@
+openapi: 3.0.3
+
+info:
+  title: forge-ci engine contract
+  version: "1.0.0"
+  description: >-
+    What every forge-ci engine takes and returns.
+
+    Spec, Resource, DeclareInput and DeclareOutput also appear in
+    forge-revision-spec. That file is the contract between two tools, forge-ci
+    and forge-factory, and holds only what both read. This one is the contract
+    between forge-ci and the engines it calls. The four are repeated rather
+    than shared across files, because an engine generates from one spec and a
+    cross file reference would need a resolver that neither generator has.
+
+paths: {}
+
+components:
+  schemas:
+    Spec:
+      type: object
+      additionalProperties: true
+      description: >-
+        Engine specific configuration. forge-ci never reads inside it.
+
+    Status:
+      type: string
+      enum: [pending, running, passed, failed]
+      description: What a run or a gate came to.
+
+    Resource:
+      type: object
+      description: Something an engine needs to exist. Declared by engines, realized by managers.
+      required: [kind, name]
+      properties:
+        kind:
+          type: string
+          description: Resource kind, for example directory or table.
+        name:
+          type: string
+          description: Unique name within the kind.
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    Ownership:
+      type: object
+      description: Which manager created a resource. A second manager must not touch it.
+      required: [resource, manager]
+      properties:
+        resource:
+          type: string
+          description: Resource id, kind slash name.
+        manager:
+          type: string
+          description: Alias of the manager that created it.
+
+    DeclareInput:
+      type: object
+      description: >-
+        What an engine is asked with when it reports what it needs. An engine
+        declares before anything exists to name, so it carries the spec block
+        and nothing else.
+      properties:
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    DeclareOutput:
+      type: object
+      description: What an engine needs to exist. An engine with no infrastructure returns an empty list.
+      required: [resources]
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+
+    ReconcileInput:
+      type: object
+      description: What a manager is asked to make exist.
+      required: [manager, resources]
+      properties:
+        manager:
+          type: string
+          description: Alias of the manager being asked.
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        owned:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ownership'
+          description: What is already owned, so a manager refuses another's resource.
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    ReconcileOutput:
+      type: object
+      description: What a manager made exist, and what it did.
+      required: [owned, actions]
+      properties:
+        owned:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ownership'
+        actions:
+          type: array
+          items:
+            type: string
+          description: One line per thing done, for a human reading a report.
+
+    TriggerOutput:
+      type: object
+      description: Whether the watched repos moved since the last fingerprint.
+      required: [changed, fingerprint]
+      properties:
+        changed:
+          type: boolean
+        reason:
+          type: string
+        fingerprint:
+          type: string
+          description: Opaque. Handed back on the next poll as spec.previous.
+
+    RepoCheckout:
+      type: object
+      description: One repo as the compute engine sees it.
+      required: [name, path, sha]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        sha:
+          type: string
+
+    Target:
+      type: object
+      description: One thing to run. Either a forge target or a forge-ci verb, never both.
+      required: [alias]
+      properties:
+        alias:
+          type: string
+        forge:
+          type: string
+          description: A forge target, run in each repo named by in.
+        forgeCI:
+          type: string
+          description: A forge-ci verb, run at the workspace root.
+        in:
+          type: array
+          items:
+            type: string
+
+    ForgeResult:
+      type: object
+      additionalProperties: true
+      description: >-
+        forge's own TestReport and Artifact records, carried verbatim. Their
+        schema lives in forge and is not repeated here, because a copy drifts
+        from what forge actually emits.
+
+    ForgeArtifact:
+      type: object
+      additionalProperties: true
+      description: >-
+        One artifact record from forge, carried verbatim. Its schema lives in
+        forge for the same reason ForgeResult's does.
+
+    RunInput:
+      type: object
+      description: What a compute engine is asked to run.
+      required: [revision, stage, substage, targets, root]
+      properties:
+        revision:
+          type: string
+        stage:
+          type: string
+        substage:
+          type: string
+        targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Target'
+        params:
+          type: object
+          additionalProperties:
+            type: string
+          description: User defined values, templated into the targets.
+        repos:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepoCheckout'
+        root:
+          type: string
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    RunOutput:
+      type: object
+      description: What a compute engine came back with.
+      required: [status]
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        message:
+          type: string
+        output:
+          type: string
+          description: The tail of what the command printed, kept for a failure.
+        forge:
+          $ref: '#/components/schemas/ForgeResult'
+
+    GateResult:
+      type: object
+      description: What one gate decided.
+      required: [alias, status]
+      properties:
+        alias:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+        message:
+          type: string
+
+    Run:
+      type: object
+      description: One substage that ran, and what came of it.
+      required: [revision, stage, substage, engine, status, startedAt, duration]
+      properties:
+        revision:
+          type: string
+        stage:
+          type: string
+        substage:
+          type: string
+        engine:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+        startedAt:
+          type: string
+          format: date-time
+        duration:
+          type: number
+          description: Seconds.
+        message:
+          type: string
+        output:
+          type: string
+        forge:
+          $ref: '#/components/schemas/ForgeResult'
+        gates:
+          type: array
+          items:
+            $ref: '#/components/schemas/GateResult'
+
+    GateInput:
+      type: object
+      description: A gate judges a run after it finished. A gate never runs before.
+      required: [run]
+      properties:
+        run:
+          $ref: '#/components/schemas/Run'
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    PromotionInput:
+      type: object
+      description: Whether a stage advances, decided once over every substage outcome.
+      required: [stage, runs]
+      properties:
+        stage:
+          type: string
+        runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    PromotionOutput:
+      type: object
+      description: The decision, and why.
+      required: [advance, reason]
+      properties:
+        advance:
+          type: boolean
+        reason:
+          type: string
+
+    ArtifactInput:
+      type: object
+      description: What a release engine is handed once a stage proved a revision.
+      required: [revision, version]
+      properties:
+        revision:
+          type: string
+          description: The revision being released.
+        version:
+          type: string
+          description: The semver tag to publish under.
+        repos:
+          type: object
+          additionalProperties:
+            type: string
+          description: Repo name to commit SHA.
+        artifacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForgeArtifact'
+          description: What forge built.
+        spec:
+          $ref: '#/components/schemas/Spec'
+
+    ArtifactOutput:
+      type: object
+      description: What reached the outside world.
+      required: [published]
+      properties:
+        published:
+          type: boolean
+        url:
+          type: string
+        reason:
+          type: string
+        tagged:
+          type: array
+          items:
+            type: string
+          description: Repos that carry the tag now.
