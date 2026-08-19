@@ -28,8 +28,12 @@ properties:
       additionalProperties: false
       required: [name, url]
       properties:
-        name: { type: string, minLength: 1 }
-        url:  { type: string, minLength: 1 }
+        name:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          minLength: 1
         ref:
           type: string
           default: main
@@ -45,8 +49,10 @@ properties:
       additionalProperties: false
       required: [alias, engine]
       properties:
-        alias:  { $ref: "#/$defs/alias" }
-        engine: { $ref: "#/$defs/engineURI" }
+        alias:
+          $ref: "#/$defs/alias"
+        engine:
+          $ref: "#/$defs/engineURI"
         spec:
           type: object
           description: Manager specific configuration. Validated by the manager.
@@ -62,9 +68,12 @@ properties:
       additionalProperties: false
       required: [alias, type, engine, manager]
       properties:
-        alias:  { $ref: "#/$defs/alias" }
-        type:   { $ref: "#/$defs/port" }
-        engine: { $ref: "#/$defs/engineURI" }
+        alias:
+          $ref: "#/$defs/alias"
+        type:
+          $ref: "#/$defs/port"
+        engine:
+          $ref: "#/$defs/engineURI"
         manager:
           $ref: "#/$defs/alias"
           description: Alias of an entry in managers.
@@ -79,7 +88,8 @@ properties:
   triggers:
     type: array
     description: Aliases of engines whose type is trigger.
-    items: { $ref: "#/$defs/alias" }
+    items:
+      $ref: "#/$defs/alias"
 
   targets:
     type: array
@@ -94,7 +104,8 @@ properties:
         - required: [forge]
         - required: [forgeCI]
       properties:
-        alias: { $ref: "#/$defs/alias" }
+        alias:
+          $ref: "#/$defs/alias"
         forge:
           type: string
           minLength: 1
@@ -107,7 +118,8 @@ properties:
           type: array
           description: >-
             Repo names the target runs in. Empty means the pipeline root.
-          items: { type: string }
+          items:
+            type: string
 
   stages:
     type: array
@@ -120,7 +132,8 @@ properties:
       additionalProperties: false
       required: [name, substages]
       properties:
-        name: { $ref: "#/$defs/alias" }
+        name:
+          $ref: "#/$defs/alias"
         promotion:
           $ref: "#/$defs/alias"
           description: >-
@@ -136,25 +149,31 @@ properties:
             additionalProperties: false
             required: [name, engine, manager, targets]
             properties:
-              name:    { $ref: "#/$defs/alias" }
-              engine:  { $ref: "#/$defs/alias" }
-              manager: { $ref: "#/$defs/alias" }
+              name:
+                $ref: "#/$defs/alias"
+              engine:
+                $ref: "#/$defs/alias"
+              manager:
+                $ref: "#/$defs/alias"
               targets:
                 type: array
                 minItems: 1
-                items: { $ref: "#/$defs/alias" }
+                items:
+                  $ref: "#/$defs/alias"
               gates:
                 type: array
                 description: >-
                   Aliases of engines whose type is gate. Every gate runs after
                   the substage finishes. A gate never runs before.
-                items: { $ref: "#/$defs/alias" }
+                items:
+                  $ref: "#/$defs/alias"
               params:
                 type: object
                 description: >-
                   User defined keys, templated into the targets as {{.Params.x}}.
                   forge-ci never interprets these names.
-                additionalProperties: { type: string }
+                additionalProperties:
+                  type: string
 
 $defs:
   alias:
