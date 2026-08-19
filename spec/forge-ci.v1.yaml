@@ -9,6 +9,11 @@ additionalProperties: false
 required: [name, engines, state, stages]
 
 properties:
+  version:
+    type: string
+    description: >-
+      The semver tag a release publishes under. Required by a stage that
+      declares a release, and ignored otherwise.
   name:
     type: string
     minLength: 1
@@ -134,6 +139,19 @@ properties:
       properties:
         name:
           $ref: "#/$defs/alias"
+        mint:
+          type: boolean
+          description: >-
+            Write the revision to state when this stage advances. A revision is
+            a claim that this tuple of commits was proven, so minting it before
+            anything runs hands a broken build a revision that can propagate.
+            Set it on the stage that builds and tests. Left unset on every
+            stage, nothing is ever minted.
+        release:
+          $ref: "#/$defs/alias"
+          description: >-
+            Alias of an engine whose type is artifact. It runs after the stage
+            advances, so nothing is published for a build that did not pass.
         promotion:
           $ref: "#/$defs/alias"
           description: >-
