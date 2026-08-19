@@ -1,0 +1,175 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://github.com/alexandremahdhaoui/forge-ci-spec/spec/forge-ci.v1.yaml"
+title: pipeline
+description: >-
+  A forge-ci pipeline. Declares which repos form a revision, which engines and
+  managers exist, and the ordered stages a revision moves through.
+type: object
+additionalProperties: false
+required: [name, engines, state, stages]
+
+properties:
+  name:
+    type: string
+    minLength: 1
+    description: Pipeline identifier.
+
+  artifactStorePath:
+    type: string
+    description: Where forge-ci records its own artifacts.
+
+  repos:
+    type: array
+    description: >-
+      The repos that form a revision. Optional. One repo is valid. A pipeline
+      with no repos still runs, and its revision is the pipeline file itself.
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, url]
+      properties:
+        name: { type: string, minLength: 1 }
+        url:  { type: string, minLength: 1 }
+        ref:
+          type: string
+          default: main
+          description: Branch to track.
+
+  managers:
+    type: array
+    description: >-
+      Named manager instances. A manager makes declared resources exist. It
+      knows nothing about CI.
+    items:
+      type: object
+      additionalProperties: false
+      required: [alias, engine]
+      properties:
+        alias:  { $ref: "#/$defs/alias" }
+        engine: { $ref: "#/$defs/engineURI" }
+        spec:
+          type: object
+          description: Manager specific configuration. Validated by the manager.
+
+  engines:
+    type: array
+    minItems: 1
+    description: >-
+      Named engine instances. An engine implements one port. It declares the
+      resources it needs and never names a manager kind.
+    items:
+      type: object
+      additionalProperties: false
+      required: [alias, type, engine, manager]
+      properties:
+        alias:  { $ref: "#/$defs/alias" }
+        type:   { $ref: "#/$defs/port" }
+        engine: { $ref: "#/$defs/engineURI" }
+        manager:
+          $ref: "#/$defs/alias"
+          description: Alias of an entry in managers.
+        spec:
+          type: object
+          description: Engine specific configuration. Validated by the engine.
+
+  state:
+    $ref: "#/$defs/alias"
+    description: Alias of the engine whose type is state.
+
+  triggers:
+    type: array
+    description: Aliases of engines whose type is trigger.
+    items: { $ref: "#/$defs/alias" }
+
+  targets:
+    type: array
+    description: >-
+      Named units of work. A target names a forge target or a forge-ci verb.
+      This is the only place a forge target appears.
+    items:
+      type: object
+      additionalProperties: false
+      required: [alias]
+      oneOf:
+        - required: [forge]
+        - required: [forgeCI]
+      properties:
+        alias: { $ref: "#/$defs/alias" }
+        forge:
+          type: string
+          minLength: 1
+          description: Arguments passed to forge. For example "test-all".
+        forgeCI:
+          type: string
+          minLength: 1
+          description: A forge-ci verb. For example "apply".
+        in:
+          type: array
+          description: >-
+            Repo names the target runs in. Empty means the pipeline root.
+          items: { type: string }
+
+  stages:
+    type: array
+    minItems: 1
+    description: >-
+      Ordered phases. A revision moves through them left to right. There is no
+      dependency graph. Order is list order.
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, substages]
+      properties:
+        name: { $ref: "#/$defs/alias" }
+        promotion:
+          $ref: "#/$defs/alias"
+          description: >-
+            Alias of an engine whose type is promotion. It decides whether the
+            stage advances, given every substage outcome.
+        substages:
+          type: array
+          minItems: 1
+          description: >-
+            Independent units inside a stage. They run at the same time.
+          items:
+            type: object
+            additionalProperties: false
+            required: [name, engine, manager, targets]
+            properties:
+              name:    { $ref: "#/$defs/alias" }
+              engine:  { $ref: "#/$defs/alias" }
+              manager: { $ref: "#/$defs/alias" }
+              targets:
+                type: array
+                minItems: 1
+                items: { $ref: "#/$defs/alias" }
+              gates:
+                type: array
+                description: >-
+                  Aliases of engines whose type is gate. Every gate runs after
+                  the substage finishes. A gate never runs before.
+                items: { $ref: "#/$defs/alias" }
+              params:
+                type: object
+                description: >-
+                  User defined keys, templated into the targets as {{.Params.x}}.
+                  forge-ci never interprets these names.
+                additionalProperties: { type: string }
+
+$defs:
+  alias:
+    type: string
+    pattern: "^[a-z0-9][a-z0-9-]*$"
+    description: Lowercase kebab-case identifier.
+
+  port:
+    type: string
+    enum: [compute, state, trigger, gate, promotion, artifact]
+    description: The question an engine answers.
+
+  engineURI:
+    type: string
+    pattern: "^(go|alias)://.+"
+    description: >-
+      Only go:// and alias:// resolve. Anything else is a hard error, matching
+      forge.
