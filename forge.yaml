@@ -5,13 +5,13 @@ artifactStorePath: .forge/artifact-store.yaml
 build:
   - name: noop
     src: .
-    engine: go://generic-builder
+    engine: forge://generic-builder
     spec:
       command: "true"
 
 test:
   - name: vectors
-    runner: go://generic-test-runner
+    runner: forge://generic-test-runner
     spec:
       command: sh
       args: ["hack/validate.sh"]

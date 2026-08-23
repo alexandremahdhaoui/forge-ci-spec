@@ -16,10 +16,10 @@
       "why": "one repo, one engine, one stage. The smallest thing that runs.",
       "doc": {
         "name": "minimal",
-        "managers": [{ "alias": "local", "engine": "go://x/cmd/ci-manager-local@v0.1.0" }],
+        "managers": [{ "alias": "local", "engine": "forge://x/cmd/ci-manager-local@v0.1.0" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x/cmd/ci-compute-local@v0.1.0", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://x/cmd/ci-state-git@v0.1.0", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x/cmd/ci-compute-local@v0.1.0", "manager": "local" },
+          { "alias": "st", "type": "state", "engine": "forge://x/cmd/ci-state-git@v0.1.0", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "build", "forge": "test-all" }],
@@ -35,10 +35,10 @@
       "why": "repos is optional. A pipeline with none is valid and its revision is the pipeline file.",
       "doc": {
         "name": "norepos",
-        "managers": [{ "alias": "local", "engine": "go://x/cmd/ci-manager-local@v0.1.0" }],
+        "managers": [{ "alias": "local", "engine": "forge://x/cmd/ci-manager-local@v0.1.0" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x/cmd/ci-compute-local@v0.1.0", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://x/cmd/ci-state-git@v0.1.0", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x/cmd/ci-compute-local@v0.1.0", "manager": "local" },
+          { "alias": "st", "type": "state", "engine": "forge://x/cmd/ci-state-git@v0.1.0", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "noop", "forgeCI": "status" }],
@@ -54,12 +54,12 @@
       "why": "a stage fans out. Substages carry user params that forge-ci never interprets.",
       "doc": {
         "name": "fanout",
-        "managers": [{ "alias": "local", "engine": "go://x/cmd/ci-manager-local@v0.1.0" }],
+        "managers": [{ "alias": "local", "engine": "forge://x/cmd/ci-manager-local@v0.1.0" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x/cmd/ci-compute-local@v0.1.0", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://x/cmd/ci-state-git@v0.1.0", "manager": "local" },
-          { "alias": "approve", "type": "gate", "engine": "go://x/cmd/ci-gate-manual@v0.1.0", "manager": "local" },
-          { "alias": "all-pass", "type": "promotion", "engine": "go://x/cmd/ci-promotion-all@v0.1.0", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x/cmd/ci-compute-local@v0.1.0", "manager": "local" },
+          { "alias": "st", "type": "state", "engine": "forge://x/cmd/ci-state-git@v0.1.0", "manager": "local" },
+          { "alias": "approve", "type": "gate", "engine": "forge://x/cmd/ci-gate-manual@v0.1.0", "manager": "local" },
+          { "alias": "all-pass", "type": "promotion", "engine": "forge://x/cmd/ci-promotion-all@v0.1.0", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "deploy", "forge": "run deploy --region {{.Params.region}} --cell {{.Params.cell}}" }],
@@ -73,13 +73,13 @@
     },
     {
       "case": "alias-engine-uri",
-      "why": "alias:// resolves as well as go://, matching forge.",
+      "why": "alias:// resolves as well as forge://, matching forge.",
       "doc": {
         "name": "aliased",
         "managers": [{ "alias": "local", "engine": "alias://my-manager" }],
         "engines": [
           { "alias": "here", "type": "compute", "engine": "alias://my-compute", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://x/cmd/ci-state-git@v0.1.0", "manager": "local" }
+          { "alias": "st", "type": "state", "engine": "forge://x/cmd/ci-state-git@v0.1.0", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "t", "forge": "test-all" }],
@@ -101,14 +101,27 @@
       "doc": { "name": "x", "engines": [], "state": "st", "stages": [] }
     },
     {
+      "case": "go-scheme-removed",
+      "why": "the go:// scheme is removed. A migration must not fail silently: the error names forge://.",
+      "error": "forge://",
+      "semantic": false,
+      "doc": {
+        "name": "x",
+        "managers": [{ "alias": "local", "engine": "go://x/cmd/ci-manager-local@v0.1.0" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "local" }],
+        "state": "st",
+        "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]
+      }
+    },
+    {
       "case": "bad-engine-scheme",
-      "why": "only go:// and alias:// resolve. Matching forge, anything else is a hard error.",
+      "why": "only forge:// and alias:// resolve. Matching forge, anything else is a hard error.",
       "error": "engine",
       "semantic": false,
       "doc": {
         "name": "x",
         "managers": [{ "alias": "local", "engine": "https://example.com/thing" }],
-        "engines": [{ "alias": "st", "type": "state", "engine": "go://x@v1", "manager": "local" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "local" }],
         "state": "st",
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]
       }
@@ -120,8 +133,8 @@
       "semantic": false,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "st", "type": "computer", "engine": "go://x@v1", "manager": "local" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "st", "type": "computer", "engine": "forge://x@v1", "manager": "local" }],
         "state": "st",
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]
       }
@@ -133,8 +146,8 @@
       "semantic": false,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "Local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "st", "type": "state", "engine": "go://x@v1", "manager": "Local" }],
+        "managers": [{ "alias": "Local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "Local" }],
         "state": "st",
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "Local", "targets": ["t"] }] }]
       }
@@ -146,8 +159,8 @@
       "semantic": false,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "st", "type": "state", "engine": "go://x@v1", "manager": "local" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "local" }],
         "state": "st",
         "targets": [{ "alias": "t" }],
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]
@@ -161,8 +174,8 @@
       "doc": {
         "name": "x",
         "pipelines": [],
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "st", "type": "state", "engine": "go://x@v1", "manager": "local" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "local" }],
         "state": "st",
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]
       }
@@ -175,8 +188,8 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "here", "type": "compute", "engine": "go://x@v1", "manager": "local" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "here", "type": "compute", "engine": "forge://x@v1", "manager": "local" }],
         "state": "missing",
         "targets": [{ "alias": "t", "forge": "test-all" }],
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "here", "manager": "local", "targets": ["t"] }] }]
@@ -189,8 +202,8 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "here", "type": "compute", "engine": "go://x@v1", "manager": "local" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "here", "type": "compute", "engine": "forge://x@v1", "manager": "local" }],
         "state": "here",
         "targets": [{ "alias": "t", "forge": "test-all" }],
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "here", "manager": "local", "targets": ["t"] }] }]
@@ -203,8 +216,8 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "st", "type": "state", "engine": "go://x@v1", "manager": "local" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "local" }],
         "state": "st",
         "targets": [{ "alias": "t", "forge": "test-all" }],
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]
@@ -217,10 +230,10 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x@v1", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://x@v1", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x@v1", "manager": "local" },
+          { "alias": "st", "type": "state", "engine": "forge://x@v1", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "t", "forge": "test-all" }],
@@ -234,10 +247,10 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x@v1", "manager": "local" },
-          { "alias": "here", "type": "state", "engine": "go://y@v1", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x@v1", "manager": "local" },
+          { "alias": "here", "type": "state", "engine": "forge://y@v1", "manager": "local" }
         ],
         "state": "here",
         "targets": [{ "alias": "t", "forge": "test-all" }],
@@ -251,10 +264,10 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x@v1", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://y@v1", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x@v1", "manager": "local" },
+          { "alias": "st", "type": "state", "engine": "forge://y@v1", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "t", "forge": "test-all" }],
@@ -269,10 +282,10 @@
       "doc": {
         "name": "x",
         "repos": [{ "name": "a", "url": "git@example.com:a.git" }],
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
         "engines": [
-          { "alias": "here", "type": "compute", "engine": "go://x@v1", "manager": "local" },
-          { "alias": "st", "type": "state", "engine": "go://y@v1", "manager": "local" }
+          { "alias": "here", "type": "compute", "engine": "forge://x@v1", "manager": "local" },
+          { "alias": "st", "type": "state", "engine": "forge://y@v1", "manager": "local" }
         ],
         "state": "st",
         "targets": [{ "alias": "t", "forge": "test-all", "in": ["b"] }],
@@ -286,8 +299,8 @@
       "semantic": true,
       "doc": {
         "name": "x",
-        "managers": [{ "alias": "local", "engine": "go://m@v1" }],
-        "engines": [{ "alias": "st", "type": "state", "engine": "go://y@v1", "manager": "nope" }],
+        "managers": [{ "alias": "local", "engine": "forge://m@v1" }],
+        "engines": [{ "alias": "st", "type": "state", "engine": "forge://y@v1", "manager": "nope" }],
         "state": "st",
         "targets": [{ "alias": "t", "forge": "test-all" }],
         "stages": [{ "name": "s", "substages": [{ "name": "d", "engine": "st", "manager": "local", "targets": ["t"] }] }]

@@ -206,7 +206,7 @@ $defs:
 
   engineURI:
     type: string
-    pattern: "^(go|alias)://.+"
+    pattern: "^(forge|alias)://.+"
     description: >-
-      Only go:// and alias:// resolve. Anything else is a hard error, matching
+      Only forge:// and alias:// resolve. Anything else is a hard error, matching
       forge.

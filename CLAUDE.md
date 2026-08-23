@@ -31,7 +31,7 @@ names. The conventions are not ours to pick.
 | Keys | lowerCamelCase | `artifactStorePath` |
 | Enum values | kebab-case | `type: compute` |
 | Aliases | kebab-case | `all-pass` |
-| Engine URIs | `go://` or `alias://` only | anything else is a hard error |
+| Engine URIs | `forge://` or `alias://` only | anything else is a hard error |
 
 ## forge-ci rejects unknown keys and forge does not
 
