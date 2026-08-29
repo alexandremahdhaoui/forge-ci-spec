@@ -104,6 +104,16 @@ components:
           items:
             $ref: '#/components/schemas/Ownership'
           description: What is already owned, so a manager refuses another's resource.
+        bootstrap:
+          type: boolean
+          description: >
+            Whether this is the provisioning ceremony.
+
+            A resource marked bootstrapOnly is still handed over when this is
+            false - the manager keeps owning it, which is what stops another
+            manager claiming it - but the manager must not realize it.
+
+            Credentials are the case. Only a bootstrap writes one.
         spec:
           $ref: '#/components/schemas/Spec'
 
