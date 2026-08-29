@@ -174,6 +174,14 @@ components:
       properties:
         revision:
           type: string
+        version:
+          type: string
+          description: >-
+            The number this apply would release under, derived before the
+            first stage. A compute target stamps it into what it builds, so a
+            binary reports the release it shipped in rather than the nearest
+            tag its own repo happens to carry. Absent when the pipeline
+            releases nothing.
         stage:
           type: string
         substage:
