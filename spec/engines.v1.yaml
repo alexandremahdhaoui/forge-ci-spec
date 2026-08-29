@@ -299,7 +299,16 @@ components:
           description: The revision being released.
         version:
           type: string
-          description: The semver tag to publish under.
+          description: >-
+            The semver tag to publish under. Decided by the core and by
+            nothing else. An engine that computes its own is a second
+            authority, and two authorities is how every member of a workspace
+            drifted onto a version line of its own.
+        tagPrefix:
+          type: string
+          description: >-
+            Namespaces the tag when one repo is released by more than one
+            factory. Absent means the tag is the version.
         repos:
           type: object
           additionalProperties:

@@ -9,11 +9,64 @@ additionalProperties: false
 required: [name, engines, state, stages]
 
 properties:
-  version:
-    type: string
+  versioning:
+    type: object
+    additionalProperties: false
     description: >-
-      The semver tag a release publishes under. Required by a stage that
-      declares a release, and ignored otherwise.
+      How the one number this factory releases under is derived. Every member
+      is tagged with it, so a workspace has one version line rather than one
+      per repo. There is no field to type a version into: a version is derived
+      or it is nothing, so it can never be re-pointed at a release that
+      already exists.
+    properties:
+      tagPrefix:
+        type: string
+        pattern: "^[a-z0-9][a-z0-9-]*$"
+        description: >-
+          Goes in front of the semver, joined with a dash. Absent means no
+          prefix, which is what every factory does: v0.50.0. Set it only when
+          one repo is released by more than one factory, so the two lines do
+          not read each other's tags.
+      strategy:
+        type: string
+        enum: [bump-patch-version, bump-minor-version, semantic]
+        description: >-
+          Which number moves. Absent means bump-patch-version.
+      cap:
+        type: string
+        pattern: "^v(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*))?$"
+        description: >-
+          The ceiling the bump may not cross, inclusive. "v0" holds the major
+          at 0; "v0.50" holds major and minor. A bump that would cross it
+          drops one level and retries, so a factory that is not ready for v1
+          keeps releasing rather than stopping. A full semver is refused: a
+          cap on the patch would stop the only bump that always works.
+      semantic:
+        type: object
+        additionalProperties: false
+        description: >-
+          The vocabulary the semantic strategy reads commit subjects with. It
+          is a vocabulary and not a standard: a team writes the prefixes it
+          actually uses, emoji included. Ignored by the other strategies.
+        properties:
+          major:
+            type: array
+            items: {type: string}
+          minor:
+            type: array
+            items: {type: string}
+          patch:
+            type: array
+            items: {type: string}
+          ignore:
+            type: array
+            items: {type: string}
+          unmatched:
+            type: string
+            enum: [major, minor, patch, ignore]
+            description: >-
+              What a subject no list claims scores. Absent means patch. Set it
+              to ignore to make the vocabulary exhaustive.
   name:
     type: string
     minLength: 1
