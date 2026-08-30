@@ -116,6 +116,27 @@ components:
             Credentials are the case. Only a bootstrap writes one.
         spec:
           $ref: '#/components/schemas/Spec'
+        dryRun:
+          type: boolean
+          description: >
+            Whether to answer what would happen and write nothing.
+
+            A manager reads actual state exactly as it always does, reports
+            the action it would take on each resource, and performs no write
+            and no settle. It is the same code path as a real reconcile with
+            the write suppressed, so a plan that says nothing would change is
+            a promise the next run keeps.
+        force:
+          type: boolean
+          description: >
+            Whether to rewrite a resource that already exists but cannot be
+            compared.
+
+            Only a write-only resource needs this. The Actions secrets API
+            never returns a value, so a put over an existing secret silently
+            replaces whatever was there and two operators with different
+            credentials leave one winner. Without this, an existing secret is
+            left alone.
 
     ReconcileOutput:
       type: object
