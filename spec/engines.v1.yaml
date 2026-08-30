@@ -156,6 +156,15 @@ components:
           type: string
         sha:
           type: string
+        needs:
+          type: array
+          items:
+            type: string
+          description: >-
+            Repos that must finish before this one starts, when a target runs
+            in both. A compute engine groups a target's dirs into waves from
+            these edges and runs a wave at once. With none declared every dir
+            is its own wave, in the order given, which is one at a time.
 
     Target:
       type: object
