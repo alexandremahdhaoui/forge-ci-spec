@@ -131,6 +131,19 @@ components:
           items:
             type: string
           description: One line per thing done, for a human reading a report.
+        changed:
+          type: boolean
+          description: >
+            Whether this manager found a difference between what was declared
+            and what existed, and performed a change to close it.
+
+            A caller stops the run when this is true. The change is already
+            durable - a manager that needs a separate act to make it so has
+            done that act by the time it answers - so the next run reads the
+            corrected state and this is false.
+
+            Not required. An older manager that never sets it reports false,
+            which is the behaviour that predates the field.
 
     TriggerOutput:
       type: object
