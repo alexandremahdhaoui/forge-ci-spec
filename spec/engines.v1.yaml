@@ -72,10 +72,17 @@ components:
       description: >-
         What an engine is asked with when it reports what it needs. An engine
         declares before anything exists to name, so it carries the spec block
-        and nothing else.
+        and the pipeline root, and nothing else.
       properties:
         spec:
           $ref: '#/components/schemas/Spec'
+        root:
+          type: string
+          description: >-
+            The pipeline root on the local filesystem, for an engine whose
+            spec names workspace files to read at declare time - a resolved
+            pin a sync generated, for example. Optional, so an engine that
+            reads nothing keeps validating without it.
 
     DeclareOutput:
       type: object
