@@ -367,6 +367,56 @@
           }
         ]
       }
+    },
+    {
+      "case": "substage-sync",
+      "why": "sync on a substage converges the workspace - manifests, then the dependency closure - before its targets run.",
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ],
+                "sync": true
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "invalid": [
@@ -1287,6 +1337,67 @@
         "versioning": {
           "versionig": "v0"
         }
+      }
+    },
+    {
+      "case": "multi-repo-never-syncs",
+      "why": "a multi-repo workspace builds against generated manifests, so a pipeline that never converges them is building what nobody wrote. JSON Schema cannot count repos against substages, so the validator does.",
+      "error": "converges its workspace nowhere",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          },
+          {
+            "name": "repo-b",
+            "url": "git@example.com:x/repo-b.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
       }
     }
   ]

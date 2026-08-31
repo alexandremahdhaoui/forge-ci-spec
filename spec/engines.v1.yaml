@@ -252,6 +252,14 @@ components:
           type: string
         substage:
           type: string
+        sync:
+          type: boolean
+          description: >-
+            Converge the workspace before any target runs - manifests first,
+            then the dependency closure. On the wire rather than a core
+            shell-out because the machine that must converge is the one the
+            engine runs targets on; a remote runner is never reached by
+            anything the core executes.
         targets:
           type: array
           items:

@@ -245,6 +245,13 @@ properties:
                   forge-ci never interprets these names.
                 additionalProperties:
                   type: string
+              sync:
+                type: boolean
+                description: >-
+                  Converge the workspace before this substage's targets run -
+                  manifests first, then the dependency closure. A multi-repo
+                  pipeline must set it on at least one substage; that rule is
+                  semantic and checked in a second pass.
 
 $defs:
   alias:
