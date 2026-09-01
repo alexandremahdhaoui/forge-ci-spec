@@ -417,6 +417,71 @@
           }
         ]
       }
+    },
+    {
+      "case": "release-set",
+      "why": "releaseRepos names the repos this stage's release publishes. A factory can hold members released elsewhere; the revision keeps pinning them while the release never tags them.",
+      "doc": {
+        "name": "minimal",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "rel",
+            "type": "artifact",
+            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "release": "rel",
+            "releaseRepos": [
+              "repo-a"
+            ],
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "invalid": [
@@ -1386,6 +1451,201 @@
         "stages": [
           {
             "name": "s",
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "release-repos-without-release",
+      "why": "a release set with no release engine publishes nothing and is almost certainly a mistake. JSON Schema cannot tie one key to another on the same object without forbidding valid shapes, so the validator does.",
+      "error": "releaseRepos needs a release engine",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "releaseRepos": [
+              "repo-a"
+            ],
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "release-repos-unknown-repo",
+      "why": "a release set naming a repo the factory does not hold would silently release less than declared. The cross reference is a semantic check.",
+      "error": "releaseRepos names",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "rel",
+            "type": "artifact",
+            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "release": "rel",
+            "releaseRepos": [
+              "missing"
+            ],
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "release-repos-repeats",
+      "why": "a repeated name in the release set is a copy-paste error worth reporting. The schema keeps duplicates representable so this stays a semantic check with a named repo in the message.",
+      "error": "releaseRepos repeats",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "rel",
+            "type": "artifact",
+            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "release": "rel",
+            "releaseRepos": [
+              "repo-a",
+              "repo-a"
+            ],
             "substages": [
               {
                 "name": "d",
