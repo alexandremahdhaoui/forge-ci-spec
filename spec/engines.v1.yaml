@@ -172,6 +172,19 @@ components:
 
             Not required. An older manager that never sets it reports false,
             which is the behaviour that predates the field.
+        published:
+          type: boolean
+          description: >
+            Whether the settle delivered the changes somewhere outside the
+            machine that reconciled them - a git push. The caller's stop
+            decision hangs on it: a published change re-fires the pipeline,
+            so a run may stop superseded by the run the push triggers; a
+            change nobody published cannot re-trigger anything, and a run
+            that stopped for one would strand the pipeline forever.
+
+            Not required. An older manager that never sets it reports false,
+            and a caller then continues past its changes rather than
+            stopping for a run that will never come.
 
     TriggerOutput:
       type: object
