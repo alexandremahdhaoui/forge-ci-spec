@@ -1901,8 +1901,8 @@
       }
     },
     {
-      "case": "versioning-self-reconcile-prefix-empty",
-      "why": "an empty prefix would make every commit read as a self reconcile.",
+      "case": "versioning-self-reconcile-prefix-blank",
+      "why": "a blank prefix would make every commit read as a self reconcile; the schema cannot see whitespace, so forge-ci refuses it.",
       "doc": {
         "name": "minimal",
         "managers": [
@@ -1948,11 +1948,11 @@
           }
         ],
         "versioning": {
-          "selfReconcileCommitPrefix": ""
+          "selfReconcileCommitPrefix": "   "
         }
       },
       "error": "selfReconcileCommitPrefix",
-      "semantic": false
+      "semantic": true
     }
   ]
 }
