@@ -83,6 +83,26 @@ components:
             spec names workspace files to read at declare time - a resolved
             pin a sync generated, for example. Optional, so an engine that
             reads nothing keeps validating without it.
+        stages:
+          type: array
+          description: >-
+            The stages the pipeline declares, in order, each with its
+            substages in order. A compute engine that renders the run as one
+            job per stage or per substage needs the names before anything
+            runs. Optional: an engine that renders nothing ignores it.
+          items:
+            $ref: '#/components/schemas/DeclaredStage'
+
+    DeclaredStage:
+      type: object
+      description: One stage of the pipeline, by name, with its substage names.
+      required: [name]
+      properties:
+        name:
+          type: string
+        substages:
+          type: array
+          items: {type: string}
 
     DeclareOutput:
       type: object
@@ -144,6 +164,13 @@ components:
             replaces whatever was there and two operators with different
             credentials leave one winner. Without this, an existing secret is
             left alone.
+        commitPrefix:
+          type: string
+          description: >-
+            What the commit a manager writes to make its changes durable
+            starts with. The pipeline's versioning.selfReconcileCommitPrefix,
+            so the release decision recognizes the commit it caused. Absent
+            means "forge-ci:".
 
     ReconcileOutput:
       type: object

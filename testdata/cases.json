@@ -607,6 +607,67 @@
           }
         }
       }
+    },
+    {
+      "case": "versioning-self-reconcile-prefix",
+      "why": "the self reconcile commit prefix is the factory's to choose; the default is forge-ci:, and a prefix a semantic list also names scores by that list.",
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          }
+        ],
+        "versioning": {
+          "strategy": "semantic",
+          "selfReconcileCommitPrefix": "🤖",
+          "semantic": {
+            "patch": [
+              "fix:"
+            ],
+            "minor": [
+              "🤖"
+            ]
+          }
+        }
+      }
     }
   ],
   "invalid": [
@@ -1838,6 +1899,60 @@
           "ignorePaths": "docs/**"
         }
       }
+    },
+    {
+      "case": "versioning-self-reconcile-prefix-empty",
+      "why": "an empty prefix would make every commit read as a self reconcile.",
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          }
+        ],
+        "versioning": {
+          "selfReconcileCommitPrefix": ""
+        }
+      },
+      "error": "selfReconcileCommitPrefix",
+      "semantic": false
     }
   ]
 }

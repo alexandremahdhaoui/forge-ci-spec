@@ -78,6 +78,15 @@ properties:
           release only under these paths converges without a release. List
           only what nothing embeds: a README a binary carries is a code
           change, and a pattern that hides it hides a release.
+      selfReconcileCommitPrefix:
+        type: string
+        minLength: 1
+        description: >-
+          What the commit forge-ci writes when it reconciles its own CI
+          resources starts with. Absent means "forge-ci:", so the commit
+          reads "forge-ci: self reconcile". The release decision scores that
+          commit as a patch unless a semantic list names the same prefix,
+          in which case that list wins.
   name:
     type: string
     minLength: 1
