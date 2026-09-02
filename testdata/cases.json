@@ -296,23 +296,23 @@
             "major": [
               "!:",
               "BREAKING CHANGE",
-              "💥"
+              "\ud83d\udca5"
             ],
             "minor": [
               "feat:",
-              "✨"
+              "\u2728"
             ],
             "patch": [
               "fix:",
               "perf:",
-              "🐛"
+              "\ud83d\udc1b"
             ],
             "ignore": [
               "docs:",
               "chore:",
               "test:",
               "style:",
-              "📝"
+              "\ud83d\udcdd"
             ],
             "unmatched": "patch"
           }
@@ -481,6 +481,131 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "case": "versioning-unmatched-error",
+      "why": "unmatched: error enforces the vocabulary: a subject no list claims fails the run before anything builds, so a convention nobody checks becomes one the pipeline checks.",
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          }
+        ],
+        "versioning": {
+          "strategy": "semantic",
+          "semantic": {
+            "minor": [
+              "feat:"
+            ],
+            "patch": [
+              "fix:"
+            ],
+            "ignore": [
+              "docs:"
+            ],
+            "unmatched": "error"
+          }
+        }
+      }
+    },
+    {
+      "case": "versioning-ignore-paths",
+      "why": "ignorePaths names what never releases; a release set that moved only under them converges without a release.",
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          }
+        ],
+        "versioning": {
+          "strategy": "semantic",
+          "ignorePaths": [
+            "/*.md",
+            "docs/**"
+          ],
+          "semantic": {
+            "patch": [
+              "fix:"
+            ]
+          }
+        }
       }
     }
   ],
@@ -1658,6 +1783,60 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "case": "versioning-ignore-paths-not-a-list",
+      "why": "one pattern typed as a string would be read as a list of characters or silently dropped; a list is the only shape.",
+      "error": "ignorePaths",
+      "semantic": false,
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          }
+        ],
+        "versioning": {
+          "ignorePaths": "docs/**"
+        }
       }
     }
   ]

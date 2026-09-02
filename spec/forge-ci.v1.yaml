@@ -63,10 +63,21 @@ properties:
             items: {type: string}
           unmatched:
             type: string
-            enum: [major, minor, patch, ignore]
+            enum: [major, minor, patch, ignore, error]
             description: >-
               What a subject no list claims scores. Absent means patch. Set it
-              to ignore to make the vocabulary exhaustive.
+              to ignore to make the vocabulary exhaustive, or to error to
+              enforce it: a subject no list claims then fails the run before
+              anything builds, naming the subject.
+      ignorePaths:
+        type: array
+        items: {type: string}
+        description: >-
+          Paths whose changes never release, as glob patterns against each
+          member's root. A revision whose release set differs from the last
+          release only under these paths converges without a release. List
+          only what nothing embeds: a README a binary carries is a code
+          change, and a pattern that hides it hides a release.
   name:
     type: string
     minLength: 1
