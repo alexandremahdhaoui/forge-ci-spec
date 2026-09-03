@@ -67,7 +67,8 @@
                 "manager": "local",
                 "targets": [
                   "t"
-                ]
+                ],
+                "sync": true
               }
             ]
           }
@@ -360,23 +361,23 @@
             "major": [
               "!:",
               "BREAKING CHANGE",
-              "\ud83d\udca5"
+              "💥"
             ],
             "minor": [
               "feat:",
-              "\u2728"
+              "✨"
             ],
             "patch": [
               "fix:",
               "perf:",
-              "\ud83d\udc1b"
+              "🐛"
             ],
             "ignore": [
               "docs:",
               "chore:",
               "test:",
               "style:",
-              "\ud83d\udcdd"
+              "📝"
             ],
             "unmatched": "patch"
           }
@@ -721,13 +722,13 @@
         ],
         "versioning": {
           "strategy": "semantic",
-          "selfReconcileCommitPrefix": "\ud83e\udd16",
+          "selfReconcileCommitPrefix": "🤖",
           "semantic": {
             "patch": [
               "fix:"
             ],
             "minor": [
-              "\ud83e\udd16"
+              "🤖"
             ]
           }
         }
