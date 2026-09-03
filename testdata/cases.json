@@ -11,6 +11,88 @@
   ],
   "valid": [
     {
+      "case": "release-is-a-substage",
+      "why": "a release is a substage naming an artifact engine, beside the substages that build. It runs no target, and what it must not touch is its engine's own business: ignoreRepos in the spec keeps a repo the pipeline writes every run out of the tag set. Stage order is what keeps a publish behind a green build, the same tool that orders everything else.",
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          },
+          {
+            "name": "catalog",
+            "url": "git@example.com:x/catalog.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "release-artifacts",
+            "type": "artifact",
+            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
+            "manager": "local",
+            "spec": {
+              "repo": "x/repo-a",
+              "ignoreRepos": [
+                "catalog"
+              ]
+            }
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "executables",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ],
+                "sync": true
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "release-artifacts",
+                "engine": "release-artifacts",
+                "manager": "local"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "case": "repo-needs-and-display-names",
       "why": "a repo may declare what must be built before it, and a stage or substage may carry the words a person reads instead of only an identifier.",
       "doc": {
@@ -485,7 +567,7 @@
     },
     {
       "case": "release-set",
-      "why": "releaseRepos names the repos this stage's release publishes. A factory can hold members released elsewhere; the revision keeps pinning them while the release never tags them.",
+      "why": "an artifact engine that names no ignoreRepos publishes every repo the revision pinned, which is what a factory that owns all its members wants.",
       "doc": {
         "name": "minimal",
         "repos": [
@@ -530,10 +612,6 @@
         "stages": [
           {
             "name": "build",
-            "release": "rel",
-            "releaseRepos": [
-              "repo-a"
-            ],
             "substages": [
               {
                 "name": "default",
@@ -542,6 +620,16 @@
                 "targets": [
                   "build"
                 ]
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "rel",
+                "manager": "local"
               }
             ]
           }
@@ -1717,70 +1805,10 @@
       }
     },
     {
-      "case": "release-repos-without-release",
-      "why": "a release set with no release engine publishes nothing and is almost certainly a mistake. JSON Schema cannot tie one key to another on the same object without forbidding valid shapes, so the validator does.",
-      "error": "releaseRepos needs a release engine",
-      "semantic": true,
-      "doc": {
-        "name": "x",
-        "repos": [
-          {
-            "name": "repo-a",
-            "url": "git@example.com:x/repo-a.git"
-          }
-        ],
-        "managers": [
-          {
-            "alias": "local",
-            "engine": "forge://m@v1"
-          }
-        ],
-        "engines": [
-          {
-            "alias": "here",
-            "type": "compute",
-            "engine": "forge://x@v1",
-            "manager": "local"
-          },
-          {
-            "alias": "st",
-            "type": "state",
-            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
-            "manager": "local"
-          }
-        ],
-        "state": "st",
-        "targets": [
-          {
-            "alias": "t",
-            "forge": "test-all"
-          }
-        ],
-        "stages": [
-          {
-            "name": "s",
-            "releaseRepos": [
-              "repo-a"
-            ],
-            "substages": [
-              {
-                "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
-                  "t"
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "case": "release-repos-unknown-repo",
-      "why": "a release set naming a repo the factory does not hold would silently release less than declared. The cross reference is a semantic check.",
-      "error": "releaseRepos names",
-      "semantic": true,
+      "case": "stage-release-key-retired",
+      "why": "a release is a substage naming an artifact engine, like anything else a stage does. The stage key it used to hang off is gone, and a pipeline still carrying it is reported rather than silently ignored.",
+      "error": "release",
+      "semantic": false,
       "doc": {
         "name": "x",
         "repos": [
@@ -1826,9 +1854,6 @@
           {
             "name": "s",
             "release": "rel",
-            "releaseRepos": [
-              "missing"
-            ],
             "substages": [
               {
                 "name": "d",
@@ -1844,9 +1869,67 @@
       }
     },
     {
-      "case": "release-repos-repeats",
-      "why": "a repeated name in the release set is a copy-paste error worth reporting. The schema keeps duplicates representable so this stays a semantic check with a named repo in the message.",
-      "error": "releaseRepos repeats",
+      "case": "stage-mint-key-retired",
+      "why": "the revision is minted before the first stage runs, so no stage declares it. A pipeline still carrying the key is reported rather than silently ignored.",
+      "error": "mint",
+      "semantic": false,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "mint": true,
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "artifact-substage-with-targets",
+      "why": "an artifact substage publishes what the stages before it built; it runs nothing. Targets on one would be read by nobody, and a key nobody reads is a lie about what the pipeline does. Which port the engine implements is a cross reference, so the rule is semantic.",
+      "error": "an artifact substage",
       "semantic": true,
       "doc": {
         "name": "x",
@@ -1892,11 +1975,128 @@
         "stages": [
           {
             "name": "s",
-            "release": "rel",
-            "releaseRepos": [
-              "repo-a",
-              "repo-a"
-            ],
+            "substages": [
+              {
+                "name": "d",
+                "engine": "rel",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "compute-substage-without-targets",
+      "why": "a compute substage with nothing to run is a substage that does nothing. The schema cannot require the key, because an artifact substage must not carry it, so the rule is semantic.",
+      "error": "targets",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "ignore-repos-unknown-repo",
+      "why": "an artifact engine told to leave out a repo the factory does not hold is a typo that would silently tag one repo more than intended. The engine cannot catch it - it never learns the factory's members - so the pipeline validator does.",
+      "error": "ignoreRepos names",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "rel",
+            "type": "artifact",
+            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
+            "manager": "local",
+            "spec": {
+              "ignoreRepos": [
+                "missing"
+              ]
+            }
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
             "substages": [
               {
                 "name": "d",
@@ -1905,6 +2105,85 @@
                 "targets": [
                   "t"
                 ]
+              },
+              {
+                "name": "r",
+                "engine": "rel",
+                "manager": "local"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "ignore-repos-repeats",
+      "why": "a repeated name is a copy-paste error worth reporting rather than deduplicating in silence.",
+      "error": "ignoreRepos repeats",
+      "semantic": true,
+      "doc": {
+        "name": "x",
+        "repos": [
+          {
+            "name": "repo-a",
+            "url": "git@example.com:x/repo-a.git"
+          }
+        ],
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://m@v1"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x@v1",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "rel",
+            "type": "artifact",
+            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
+            "manager": "local",
+            "spec": {
+              "ignoreRepos": [
+                "repo-a",
+                "repo-a"
+              ]
+            }
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "t",
+            "forge": "test-all"
+          }
+        ],
+        "stages": [
+          {
+            "name": "s",
+            "substages": [
+              {
+                "name": "d",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              },
+              {
+                "name": "r",
+                "engine": "rel",
+                "manager": "local"
               }
             ]
           }
