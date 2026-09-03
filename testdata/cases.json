@@ -11,8 +11,8 @@
   ],
   "valid": [
     {
-      "case": "written-repo-and-display-names",
-      "why": "a repo this pipeline writes says so, so a run can tell its own publish from somebody else's push, and a stage or substage can carry the words a person reads instead of only an identifier.",
+      "case": "repo-needs-and-display-names",
+      "why": "a repo may declare what must be built before it, and a stage or substage may carry the words a person reads instead of only an identifier.",
       "doc": {
         "name": "x",
         "repos": [
@@ -25,8 +25,7 @@
             "url": "git@example.com:x/catalog.git",
             "needs": [
               "repo-a"
-            ],
-            "written": true
+            ]
           }
         ],
         "managers": [
@@ -361,23 +360,23 @@
             "major": [
               "!:",
               "BREAKING CHANGE",
-              "💥"
+              "\ud83d\udca5"
             ],
             "minor": [
               "feat:",
-              "✨"
+              "\u2728"
             ],
             "patch": [
               "fix:",
               "perf:",
-              "🐛"
+              "\ud83d\udc1b"
             ],
             "ignore": [
               "docs:",
               "chore:",
               "test:",
               "style:",
-              "📝"
+              "\ud83d\udcdd"
             ],
             "unmatched": "patch"
           }
@@ -722,13 +721,13 @@
         ],
         "versioning": {
           "strategy": "semantic",
-          "selfReconcileCommitPrefix": "🤖",
+          "selfReconcileCommitPrefix": "\ud83e\udd16",
           "semantic": {
             "patch": [
               "fix:"
             ],
             "minor": [
-              "🤖"
+              "\ud83e\udd16"
             ]
           }
         }
@@ -1702,79 +1701,6 @@
         "stages": [
           {
             "name": "s",
-            "substages": [
-              {
-                "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
-                  "t"
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "case": "release-repos-names-a-written-repo",
-      "why": "this pipeline writes that repo on every run, so a version tag on it names a commit the release itself moved past. The two keys cross-reference, so the validator checks it rather than the schema.",
-      "error": "releaseRepos names",
-      "semantic": true,
-      "doc": {
-        "name": "x",
-        "repos": [
-          {
-            "name": "repo-a",
-            "url": "git@example.com:x/repo-a.git"
-          },
-          {
-            "name": "catalog",
-            "url": "git@example.com:x/catalog.git",
-            "written": true
-          }
-        ],
-        "managers": [
-          {
-            "alias": "local",
-            "engine": "forge://m@v1"
-          }
-        ],
-        "engines": [
-          {
-            "alias": "here",
-            "type": "compute",
-            "engine": "forge://x@v1",
-            "manager": "local"
-          },
-          {
-            "alias": "rel",
-            "type": "artifact",
-            "engine": "forge://x/cmd/ci-artifact-release@v0.1.0",
-            "manager": "local"
-          },
-          {
-            "alias": "st",
-            "type": "state",
-            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
-            "manager": "local"
-          }
-        ],
-        "state": "st",
-        "targets": [
-          {
-            "alias": "t",
-            "forge": "test-all"
-          }
-        ],
-        "stages": [
-          {
-            "name": "s",
-            "release": "rel",
-            "releaseRepos": [
-              "repo-a",
-              "catalog"
-            ],
             "substages": [
               {
                 "name": "d",

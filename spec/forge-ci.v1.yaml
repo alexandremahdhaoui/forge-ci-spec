@@ -124,17 +124,6 @@ properties:
           description: >-
             The repos that must finish before this one starts, when a target
             runs in both. A dependency and not an order.
-        written:
-          type: boolean
-          description: >-
-            This pipeline writes this repo. Its state at the start of a run is
-            still an input, so a change to it still moves the revision and
-            still re-runs everything; what changes is that the repo moving
-            DURING a run is this pipeline's own doing and never invalidates
-            the run. Any other repo moving mid-run is somebody else's push and
-            belongs to the next run. A written repo can never be in a stage's
-            releaseRepos: a version tag on a repo the release itself moves
-            means nothing.
 
   managers:
     type: array
