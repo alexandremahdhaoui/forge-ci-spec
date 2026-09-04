@@ -821,6 +821,70 @@
           }
         }
       }
+    },
+    {
+      "case": "substage-needs",
+      "why": "a substage names the substages of its own stage that must advance first. Two writes that must not race no longer need stages of their own.",
+      "doc": {
+        "name": "ordered",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "build"
+          },
+          {
+            "alias": "pack",
+            "forge": "test run package"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              },
+              {
+                "name": "package-container",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "pack"
+                ],
+                "needs": [
+                  "build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "invalid": [
@@ -2297,6 +2361,125 @@
       },
       "error": "selfReconcileCommitPrefix",
       "semantic": true
+    },
+    {
+      "case": "substage-needs-unknown",
+      "why": "a need must name a substage of the same stage. A name nothing declares would wait forever, or be silently dropped, and both read like an ordering that holds.",
+      "error": "needs",
+      "semantic": true,
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "build"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ],
+                "needs": [
+                  "nope"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "substage-needs-cycle",
+      "why": "two substages that each need the other can never start. A cycle is refused by name rather than hung.",
+      "error": "cycle",
+      "semantic": true,
+      "doc": {
+        "name": "minimal",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "build"
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "a",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ],
+                "needs": [
+                  "b"
+                ]
+              },
+              {
+                "name": "b",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ],
+                "needs": [
+                  "a"
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

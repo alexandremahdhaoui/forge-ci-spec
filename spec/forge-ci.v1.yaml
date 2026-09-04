@@ -296,6 +296,19 @@ properties:
                   manifests first, then the dependency closure. A multi-repo
                   pipeline must set it on at least one substage; that rule is
                   semantic and checked in a second pass.
+              needs:
+                type: array
+                items:
+                  $ref: "#/$defs/alias"
+                description: >-
+                  Substages of THIS stage that must advance before this one
+                  runs. Absent, a substage runs beside everything else the
+                  stage declares. Every name must be a substage of the same
+                  stage and the graph must have no cycle; both rules are
+                  semantic. This is the one ordering a stage carries: without
+                  it, two writes that must not race have to be put in stages
+                  of their own, and the stage list stops describing the
+                  pipeline.
 
 $defs:
   alias:
