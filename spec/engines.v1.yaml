@@ -72,7 +72,8 @@ components:
       description: >-
         What an engine is asked with when it reports what it needs. An engine
         declares before anything exists to name, so it carries the spec block
-        and the pipeline root, and nothing else.
+        and the pipeline root, plus the stage and repo names for an engine
+        that renders or keys on them.
       properties:
         spec:
           $ref: '#/components/schemas/Spec'
@@ -92,6 +93,23 @@ components:
             runs. Optional: an engine that renders nothing ignores it.
           items:
             $ref: '#/components/schemas/DeclaredStage'
+        repos:
+          type: array
+          description: >-
+            The pipeline's repositories by name, each a directory under the
+            root, for a compute engine that keys a cache on what the run is
+            built from - the same repositories the revision hashes. Optional:
+            an engine that keys nothing ignores them.
+          items:
+            $ref: '#/components/schemas/DeclaredRepo'
+
+    DeclaredRepo:
+      type: object
+      description: One repository of the pipeline, by the directory name it is checked out under.
+      required: [name]
+      properties:
+        name:
+          type: string
 
     DeclaredStage:
       type: object
@@ -131,6 +149,15 @@ components:
             Substages of the same stage that must advance before this one
             runs, for a compute engine that renders one job per substage and
             has to wire the order between them. Absent means none.
+        uses:
+          type: array
+          items:
+            type: string
+          description: >-
+            Substages of EARLIER stages, as <stage>/<substage>, whose built
+            artifacts this one reads, for a compute engine that brings back
+            what a job before it kept. Absent means everything every earlier
+            stage built.
 
     DeclareOutput:
       type: object
@@ -277,17 +304,24 @@ components:
 
     Target:
       type: object
-      description: One thing to run. Either a forge target or a forge-ci verb, never both.
-      required: [alias]
+      description: >-
+        One thing to run: an executable on PATH and its arguments, one per
+        element, in each repo named by in.
+      required: [alias, binary]
       properties:
         alias:
           type: string
-        forge:
+        binary:
           type: string
-          description: A forge target, run in each repo named by in.
-        forgeCI:
-          type: string
-          description: A forge-ci verb, run at the workspace root.
+          minLength: 1
+          description: The executable to run, found on PATH.
+        args:
+          type: array
+          items:
+            type: string
+          description: >-
+            Its arguments, one per element, passed verbatim - an argument
+            holding a space stays one argument.
         in:
           type: array
           items:
