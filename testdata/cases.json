@@ -61,7 +61,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -134,7 +137,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -186,7 +192,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -235,7 +244,10 @@
         "targets": [
           {
             "alias": "noop",
-            "forgeCI": "status"
+            "binary": "forge-ci",
+            "args": [
+              "status"
+            ]
           }
         ],
         "stages": [
@@ -296,7 +308,15 @@
         "targets": [
           {
             "alias": "deploy",
-            "forge": "run deploy --region {{.Params.region}} --cell {{.Params.cell}}"
+            "binary": "forge",
+            "args": [
+              "run",
+              "deploy",
+              "--region",
+              "{{.Params.region}}",
+              "--cell",
+              "{{.Params.cell}}"
+            ]
           }
         ],
         "stages": [
@@ -368,7 +388,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -417,7 +440,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -443,23 +469,23 @@
             "major": [
               "!:",
               "BREAKING CHANGE",
-              "💥"
+              "\ud83d\udca5"
             ],
             "minor": [
               "feat:",
-              "✨"
+              "\u2728"
             ],
             "patch": [
               "fix:",
               "perf:",
-              "🐛"
+              "\ud83d\udc1b"
             ],
             "ignore": [
               "docs:",
               "chore:",
               "test:",
               "style:",
-              "📝"
+              "\ud83d\udcdd"
             ],
             "unmatched": "patch"
           }
@@ -495,7 +521,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -544,7 +573,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -606,7 +638,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -665,7 +700,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -729,7 +767,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -790,7 +831,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -810,13 +854,13 @@
         ],
         "versioning": {
           "strategy": "semantic",
-          "selfReconcileCommitPrefix": "🤖",
+          "selfReconcileCommitPrefix": "\ud83e\udd16",
           "semantic": {
             "patch": [
               "fix:"
             ],
             "minor": [
-              "🤖"
+              "\ud83e\udd16"
             ]
           }
         }
@@ -851,11 +895,19 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "build"
+            "binary": "forge",
+            "args": [
+              "build"
+            ]
           },
           {
             "alias": "pack",
-            "forge": "test run package"
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "package"
+            ]
           }
         ],
         "stages": [
@@ -879,6 +931,177 @@
                 ],
                 "needs": [
                   "build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "typed-target",
+      "why": "a target is a binary and its arguments, one per element, so an argument holding a space survives and forge-ci names no binary of its own",
+      "doc": {
+        "name": "ordered",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "binary": "forge",
+            "args": [
+              "build",
+              "--frozen"
+            ]
+          },
+          {
+            "alias": "pack",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "package"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              },
+              {
+                "name": "package-container",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "pack"
+                ],
+                "needs": [
+                  "build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "substage-uses",
+      "why": "a substage names the earlier substages whose artifacts it reads, so a compute engine that carries files between jobs carries only those; absent carries everything earlier, as before",
+      "doc": {
+        "name": "carried",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "binary": "forge",
+            "args": [
+              "build",
+              "--frozen"
+            ]
+          },
+          {
+            "alias": "test",
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
+          },
+          {
+            "alias": "ship",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "ship"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "test",
+            "substages": [
+              {
+                "name": "test-all",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "test"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "ship",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "ship"
+                ],
+                "uses": [
+                  "build/build-artifacts"
                 ]
               }
             ]
@@ -1165,7 +1388,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1210,7 +1436,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1255,7 +1484,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1306,7 +1538,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1360,7 +1595,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1411,7 +1649,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1468,7 +1709,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all",
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ],
             "in": [
               "b"
             ]
@@ -1516,7 +1760,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1567,7 +1814,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1619,7 +1869,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1673,7 +1926,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1727,7 +1983,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1784,7 +2043,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1848,7 +2110,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1911,7 +2176,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -1969,7 +2237,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2033,7 +2304,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2090,7 +2364,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2155,7 +2432,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2229,7 +2509,10 @@
         "targets": [
           {
             "alias": "t",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2285,7 +2568,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2337,7 +2623,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "test-all"
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
           }
         ],
         "stages": [
@@ -2393,7 +2682,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "build"
+            "binary": "forge",
+            "args": [
+              "build"
+            ]
           }
         ],
         "stages": [
@@ -2447,7 +2739,10 @@
         "targets": [
           {
             "alias": "build",
-            "forge": "build"
+            "binary": "forge",
+            "args": [
+              "build"
+            ]
           }
         ],
         "stages": [
@@ -2474,6 +2769,553 @@
                 ],
                 "needs": [
                   "a"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "target-without-binary",
+      "why": "a target with no binary runs nothing and would read as a unit of work that holds",
+      "error": "binary",
+      "doc": {
+        "name": "ordered",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "args": [
+              "build"
+            ]
+          },
+          {
+            "alias": "pack",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "package"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              },
+              {
+                "name": "package-container",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "pack"
+                ],
+                "needs": [
+                  "build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "target-with-forge-key",
+      "why": "the forge and forgeCI keys are retired; a target names its binary. An old file fails loud rather than running nothing",
+      "error": "forge",
+      "doc": {
+        "name": "ordered",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "forge": "build"
+          },
+          {
+            "alias": "pack",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "package"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              },
+              {
+                "name": "package-container",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "pack"
+                ],
+                "needs": [
+                  "build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "uses-names-later-stage",
+      "why": "a substage can only read what ran before it; naming a later stage would wait on work that has not happened",
+      "error": "uses",
+      "semantic": true,
+      "doc": {
+        "name": "carried",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "binary": "forge",
+            "args": [
+              "build",
+              "--frozen"
+            ]
+          },
+          {
+            "alias": "test",
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
+          },
+          {
+            "alias": "ship",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "ship"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ],
+                "uses": [
+                  "release/ship"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "test",
+            "substages": [
+              {
+                "name": "test-all",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "test"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "ship",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "ship"
+                ],
+                "uses": [
+                  "build/build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "uses-names-unknown-substage",
+      "why": "a use must name a substage that exists, or it silently carries nothing",
+      "error": "uses",
+      "semantic": true,
+      "doc": {
+        "name": "carried",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "binary": "forge",
+            "args": [
+              "build",
+              "--frozen"
+            ]
+          },
+          {
+            "alias": "test",
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
+          },
+          {
+            "alias": "ship",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "ship"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "test",
+            "substages": [
+              {
+                "name": "test-all",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "test"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "ship",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "ship"
+                ],
+                "uses": [
+                  "build/nope"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "uses-on-first-stage",
+      "why": "nothing runs before the first stage, so a use there names its own stage at best",
+      "error": "uses",
+      "semantic": true,
+      "doc": {
+        "name": "carried",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "binary": "forge",
+            "args": [
+              "build",
+              "--frozen"
+            ]
+          },
+          {
+            "alias": "test",
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
+          },
+          {
+            "alias": "ship",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "ship"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ],
+                "uses": [
+                  "build/build-artifacts"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "test",
+            "substages": [
+              {
+                "name": "test-all",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "test"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "ship",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "ship"
+                ],
+                "uses": [
+                  "build/build-artifacts"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case": "uses-without-stage",
+      "why": "a use is <stage>/<substage>; a bare name is ambiguous across stages",
+      "error": "uses",
+      "doc": {
+        "name": "carried",
+        "managers": [
+          {
+            "alias": "local",
+            "engine": "forge://x/cmd/ci-manager-local@v0.1.0"
+          }
+        ],
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://x/cmd/ci-compute-local@v0.1.0",
+            "manager": "local"
+          },
+          {
+            "alias": "st",
+            "type": "state",
+            "engine": "forge://x/cmd/ci-state-git@v0.1.0",
+            "manager": "local"
+          }
+        ],
+        "state": "st",
+        "targets": [
+          {
+            "alias": "build",
+            "binary": "forge",
+            "args": [
+              "build",
+              "--frozen"
+            ]
+          },
+          {
+            "alias": "test",
+            "binary": "forge",
+            "args": [
+              "test-all"
+            ]
+          },
+          {
+            "alias": "ship",
+            "binary": "forge",
+            "args": [
+              "test",
+              "run",
+              "ship"
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "build-artifacts",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "build"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "test",
+            "substages": [
+              {
+                "name": "test-all",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "test"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "release",
+            "substages": [
+              {
+                "name": "ship",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "ship"
+                ],
+                "uses": [
+                  "build-artifacts"
                 ]
               }
             ]
