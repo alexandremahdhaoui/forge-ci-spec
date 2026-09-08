@@ -3322,6 +3322,39 @@
           }
         ]
       }
+    },
+    {
+      "case": "artifact-store-path-is-forges",
+      "why": "artifactStorePath was declared for two months and read by nothing: the store path is forge's, in each repo's forge.yaml, and forge-ci harvests what forge recorded. A retired key is refused by name, never silently dropped.",
+      "error": "artifactStorePath",
+      "semantic": false,
+      "doc": {
+        "name": "x",
+        "artifactStorePath": ".forge-ci/artifact-store.yaml",
+        "engines": [
+          {
+            "alias": "here",
+            "type": "compute",
+            "engine": "forge://github.com/x/forge-ci/cmd/ci-compute-local"
+          }
+        ],
+        "state": "st",
+        "stages": [
+          {
+            "name": "build",
+            "substages": [
+              {
+                "name": "default",
+                "engine": "here",
+                "manager": "local",
+                "targets": [
+                  "t"
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }
