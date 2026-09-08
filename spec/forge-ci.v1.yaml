@@ -201,7 +201,7 @@ properties:
             Its arguments, one per element, passed verbatim - an argument
             holding a space stays one argument. {{.Params.x}} is templated
             from the substage's params. For example ["test-all"] or
-            ["build", "--frozen"].
+            ["build"].
         in:
           type: array
           description: >-
