@@ -73,9 +73,7 @@
             "substages": [
               {
                 "name": "executables",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ],
                 "sync": true
@@ -87,8 +85,7 @@
             "substages": [
               {
                 "name": "release-artifacts",
-                "engine": "release-artifacts",
-                "manager": "local"
+                "engine": "release-artifacts"
               }
             ]
           }
@@ -151,9 +148,7 @@
               {
                 "name": "members",
                 "displayName": "Publish members into the catalog",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ],
                 "sync": true
@@ -204,9 +199,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -256,9 +249,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "noop"
                 ]
               }
@@ -326,9 +317,7 @@
             "substages": [
               {
                 "name": "eu-a",
-                "engine": "here",
-                "manager": "local",
-                "gates": [
+                "engine": "here",                "gates": [
                   "approve"
                 ],
                 "targets": [
@@ -341,9 +330,7 @@
               },
               {
                 "name": "eu-b",
-                "engine": "here",
-                "manager": "local",
-                "gates": [
+                "engine": "here",                "gates": [
                   "approve"
                 ],
                 "targets": [
@@ -400,9 +387,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -452,9 +437,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -533,9 +516,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -585,9 +566,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ],
                 "sync": true
@@ -650,9 +629,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -663,8 +640,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "rel",
-                "manager": "local"
+                "engine": "rel"
               }
             ]
           }
@@ -712,9 +688,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -779,9 +753,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -843,9 +815,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -916,17 +886,13 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               },
               {
                 "name": "package-container",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "pack"
                 ],
                 "needs": [
@@ -989,17 +955,13 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               },
               {
                 "name": "package-container",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "pack"
                 ],
                 "needs": [
@@ -1069,9 +1031,7 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -1082,9 +1042,7 @@
             "substages": [
               {
                 "name": "test-all",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "test"
                 ]
               }
@@ -1095,9 +1053,7 @@
             "substages": [
               {
                 "name": "ship",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "ship"
                 ],
                 "uses": [
@@ -1151,9 +1107,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1190,9 +1144,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1229,9 +1181,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1268,9 +1218,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "Local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1312,9 +1260,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1352,9 +1298,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1400,9 +1344,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -1448,9 +1390,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -1496,9 +1436,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1550,9 +1488,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "gates": [
+                "engine": "here",                "gates": [
                   "here"
                 ],
                 "targets": [
@@ -1607,9 +1543,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -1661,9 +1595,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "nope"
                 ]
               }
@@ -1724,9 +1656,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -1772,9 +1702,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "st",
-                "manager": "local",
-                "targets": [
+                "engine": "st",                "targets": [
                   "t"
                 ]
               }
@@ -1826,9 +1754,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -1881,9 +1807,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -1938,9 +1862,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -1995,9 +1917,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -2055,9 +1975,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -2122,9 +2040,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -2189,9 +2105,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -2250,9 +2164,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }
@@ -2316,9 +2228,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "rel",
-                "manager": "local",
-                "targets": [
+                "engine": "rel",                "targets": [
                   "t"
                 ]
               }
@@ -2376,8 +2286,7 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local"
+                "engine": "here"
               }
             ]
           }
@@ -2444,16 +2353,13 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               },
               {
                 "name": "r",
-                "engine": "rel",
-                "manager": "local"
+                "engine": "rel"
               }
             ]
           }
@@ -2521,16 +2427,13 @@
             "substages": [
               {
                 "name": "d",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               },
               {
                 "name": "r",
-                "engine": "rel",
-                "manager": "local"
+                "engine": "rel"
               }
             ]
           }
@@ -2580,9 +2483,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -2635,9 +2536,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -2694,9 +2593,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ],
                 "needs": [
@@ -2751,9 +2648,7 @@
             "substages": [
               {
                 "name": "a",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ],
                 "needs": [
@@ -2762,9 +2657,7 @@
               },
               {
                 "name": "b",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ],
                 "needs": [
@@ -2826,17 +2719,13 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               },
               {
                 "name": "package-container",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "pack"
                 ],
                 "needs": [
@@ -2896,17 +2785,13 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               },
               {
                 "name": "package-container",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "pack"
                 ],
                 "needs": [
@@ -2978,9 +2863,7 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ],
                 "uses": [
@@ -2994,9 +2877,7 @@
             "substages": [
               {
                 "name": "test-all",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "test"
                 ]
               }
@@ -3007,9 +2888,7 @@
             "substages": [
               {
                 "name": "ship",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "ship"
                 ],
                 "uses": [
@@ -3081,9 +2960,7 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -3094,9 +2971,7 @@
             "substages": [
               {
                 "name": "test-all",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "test"
                 ]
               }
@@ -3107,9 +2982,7 @@
             "substages": [
               {
                 "name": "ship",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "ship"
                 ],
                 "uses": [
@@ -3181,9 +3054,7 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ],
                 "uses": [
@@ -3197,9 +3068,7 @@
             "substages": [
               {
                 "name": "test-all",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "test"
                 ]
               }
@@ -3210,9 +3079,7 @@
             "substages": [
               {
                 "name": "ship",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "ship"
                 ],
                 "uses": [
@@ -3283,9 +3150,7 @@
             "substages": [
               {
                 "name": "build-artifacts",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "build"
                 ]
               }
@@ -3296,9 +3161,7 @@
             "substages": [
               {
                 "name": "test-all",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "test"
                 ]
               }
@@ -3309,9 +3172,7 @@
             "substages": [
               {
                 "name": "ship",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "ship"
                 ],
                 "uses": [
@@ -3345,9 +3206,7 @@
             "substages": [
               {
                 "name": "default",
-                "engine": "here",
-                "manager": "local",
-                "targets": [
+                "engine": "here",                "targets": [
                   "t"
                 ]
               }

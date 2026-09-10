@@ -249,7 +249,7 @@ properties:
           items:
             type: object
             additionalProperties: false
-            required: [name, engine, manager]
+            required: [name, engine]
             properties:
               name:
                 $ref: "#/$defs/alias"
@@ -267,8 +267,6 @@ properties:
                   publishes what the stages before it built, under the
                   version this run decided. Which of the two decides whether
                   targets is required, so both rules are semantic.
-              manager:
-                $ref: "#/$defs/alias"
               targets:
                 type: array
                 minItems: 1
